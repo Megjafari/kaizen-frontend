@@ -1,18 +1,14 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
-import { useApi } from './hooks/useApi'
+import Layout from './components/Layout'
+import Dashboard from './pages/Dashboard'
+import Workouts from './pages/Workouts'
+import Food from './pages/Food'
+import Weight from './pages/Weight'
+import Profile from './pages/Profile'
 
 function App() {
-  const { isAuthenticated, isLoading, user, loginWithRedirect, logout } = useAuth0()
-  const { fetchWithAuth } = useApi()
-
-  async function testApi() {
-    try {
-      const profile = await fetchWithAuth('/api/Profile')
-      console.log('Profile:', profile)
-    } catch (error) {
-      console.log('No profile yet:', error)
-    }
-  }
+  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0()
 
   if (isLoading) {
     return (
@@ -22,35 +18,34 @@ function App() {
     )
   }
 
-  return (
-    <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-4">
-      <h1 className="text-4xl font-bold">Kaizen</h1>
-
-      {isAuthenticated ? (
-        <>
-          <p>Welcome, {user?.name}</p>
-          <button
-            onClick={testApi}
-            className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
-          >
-            Test API
-          </button>
-          <button
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-            className="px-4 py-2 bg-red-600 rounded hover:bg-red-700"
-          >
-            Log out
-          </button>
-        </>
-      ) : (
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center gap-4">
+        <h1 className="text-4xl font-bold">Kaizen</h1>
+        <p className="text-zinc-400">Track your fitness journey</p>
         <button
           onClick={() => loginWithRedirect()}
-          className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700"
+          className="px-6 py-3 bg-indigo-600 rounded-lg hover:bg-indigo-700 font-medium"
         >
-          Log in
+          Log in to continue
         </button>
-      )}
-    </div>
+      </div>
+    )
+  }
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/workouts" element={<Workouts />} />
+          <Route path="/food" element={<Food />} />
+          <Route path="/weight" element={<Weight />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 

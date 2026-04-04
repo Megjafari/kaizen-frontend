@@ -38,6 +38,15 @@ export default function Food() {
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null)
   const [amount, setAmount] = useState('')
 
+  const [showAddIngredient, setShowAddIngredient] = useState(false)
+  const [newIngredient, setNewIngredient] = useState({
+    name: '',
+    calories: '',
+    protein: '',
+    carbs: '',
+    fat: '',
+  })
+
   const today = new Date().toISOString().split('T')[0]
 
   const loadData = useCallback(async () => {
@@ -71,6 +80,32 @@ export default function Food() {
       setIngredients(data)
     } catch (error) {
       console.error('Failed to search:', error)
+    }
+  }
+
+  async function handleAddIngredient(e: React.FormEvent) {
+    e.preventDefault()
+
+    const payload = {
+      name: newIngredient.name,
+      calories: parseFloat(newIngredient.calories),
+      protein: parseFloat(newIngredient.protein),
+      carbs: parseFloat(newIngredient.carbs),
+      fat: parseFloat(newIngredient.fat),
+    }
+
+    try {
+      const created = await fetchWithAuth('/api/Food/ingredients', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      })
+      setSelectedIngredient(created)
+      setSearch(created.name)
+      setShowAddIngredient(false)
+      setNewIngredient({ name: '', calories: '', protein: '', carbs: '', fat: '' })
+      setIngredients([])
+    } catch (error) {
+      console.error('Failed to add ingredient:', error)
     }
   }
 
@@ -167,6 +202,78 @@ export default function Food() {
                   </span>
                 </button>
               ))}
+            </div>
+          )}
+
+          {ingredients.length === 0 && search.length >= 2 && !selectedIngredient && (
+            <button
+              type="button"
+              onClick={() => {
+                setShowAddIngredient(true)
+                setNewIngredient({ ...newIngredient, name: search })
+              }}
+              className="mt-2 text-sm text-indigo-400 hover:text-indigo-300"
+            >
+              + Add "{search}" as new ingredient
+            </button>
+          )}
+
+          {showAddIngredient && (
+            <div className="mt-4 p-3 bg-zinc-800 rounded">
+              <h3 className="font-medium mb-2">Add New Ingredient (per 100g)</h3>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  value={newIngredient.name}
+                  onChange={(e) => setNewIngredient({ ...newIngredient, name: e.target.value })}
+                  className="px-2 py-1 bg-zinc-700 border border-zinc-600 rounded text-sm"
+                />
+                <input
+                  type="number"
+                  placeholder="Calories"
+                  value={newIngredient.calories}
+                  onChange={(e) => setNewIngredient({ ...newIngredient, calories: e.target.value })}
+                  className="px-2 py-1 bg-zinc-700 border border-zinc-600 rounded text-sm"
+                />
+                <input
+                  type="number"
+                  placeholder="Protein (g)"
+                  value={newIngredient.protein}
+                  onChange={(e) => setNewIngredient({ ...newIngredient, protein: e.target.value })}
+                  className="px-2 py-1 bg-zinc-700 border border-zinc-600 rounded text-sm"
+                />
+                <input
+                  type="number"
+                  placeholder="Carbs (g)"
+                  value={newIngredient.carbs}
+                  onChange={(e) => setNewIngredient({ ...newIngredient, carbs: e.target.value })}
+                  className="px-2 py-1 bg-zinc-700 border border-zinc-600 rounded text-sm"
+                />
+                <input
+                  type="number"
+                  placeholder="Fat (g)"
+                  value={newIngredient.fat}
+                  onChange={(e) => setNewIngredient({ ...newIngredient, fat: e.target.value })}
+                  className="px-2 py-1 bg-zinc-700 border border-zinc-600 rounded text-sm"
+                />
+              </div>
+              <div className="flex gap-2 mt-3">
+                <button
+                  type="button"
+                  onClick={handleAddIngredient}
+                  className="px-3 py-1 bg-green-600 rounded text-sm hover:bg-green-700"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowAddIngredient(false)}
+                  className="px-3 py-1 bg-zinc-600 rounded text-sm hover:bg-zinc-500"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
         </div>

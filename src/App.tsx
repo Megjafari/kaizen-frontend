@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
-import { useState, useEffect, useCallback } from 'react'
 import Layout from './components/Layout'
 import Onboarding from './components/Onboarding'
 import Dashboard from './pages/Dashboard'
@@ -9,29 +8,13 @@ import Food from './pages/Food'
 import Weight from './pages/Weight'
 import Profile from './pages/Profile'
 import { useApi } from './hooks/useApi'
+import { ProfileProvider } from './context/ProfileProvider'
+import { useProfile } from './hooks/useProfile'
 
 function AppContent() {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0()
   const { fetchWithAuth } = useApi()
-  const [hasProfile, setHasProfile] = useState<boolean | null>(null)
-  const [checkingProfile, setCheckingProfile] = useState(true)
-
-  const checkProfile = useCallback(async () => {
-    try {
-      await fetchWithAuth('/api/Profile')
-      setHasProfile(true)
-    } catch {
-      setHasProfile(false)
-    } finally {
-      setCheckingProfile(false)
-    }
-  }, [fetchWithAuth])
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      checkProfile()
-    }
-  }, [isAuthenticated, checkProfile])
+  const { profile, loading: profileLoading, refreshProfile } = useProfile()
 
   async function handleOnboardingComplete(data: {
     gender: string
@@ -44,10 +27,10 @@ function AppContent() {
       method: 'POST',
       body: JSON.stringify(data),
     })
-    setHasProfile(true)
+    await refreshProfile()
   }
 
-  if (isLoading || (isAuthenticated && checkingProfile)) {
+  if (isLoading || (isAuthenticated && profileLoading)) {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
         <p>Loading...</p>
@@ -70,7 +53,7 @@ function AppContent() {
     )
   }
 
-  if (!hasProfile) {
+  if (!profile) {
     return <Onboarding onComplete={handleOnboardingComplete} />
   }
 
@@ -90,8 +73,10 @@ function AppContent() {
   )
 }
 
-function App() {
-  return <AppContent />
+export default function App() {
+  return (
+    <ProfileProvider>
+      <AppContent />
+    </ProfileProvider>
+  )
 }
-
-export default App

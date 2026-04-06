@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useApi } from '../hooks/useApi'
 import Onboarding from '../components/Onboarding'
@@ -10,14 +10,17 @@ interface UserProfile {
   age: number
   gender: string
   goal: string
+  profileImageUrl?: string
 }
 
 export default function Profile() {
   const { logout } = useAuth0()
   const { fetchWithAuth } = useApi()
-  const [, setProfile] = useState<UserProfile | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
@@ -38,7 +41,6 @@ export default function Profile() {
       setGender(data.gender)
       setGoal(data.goal)
     } catch {
-      // No profile - show onboarding
       setShowOnboarding(true)
     } finally {
       setLoading(false)
@@ -48,6 +50,32 @@ export default function Profile() {
   useEffect(() => {
     loadProfile()
   }, [loadProfile])
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadingImage(true)
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+      })
+
+      const result = await fetchWithAuth('/api/Profile/image', {
+        method: 'POST',
+        body: JSON.stringify({ base64Image: base64 }),
+      })
+
+      setProfile(prev => prev ? { ...prev, profileImageUrl: result.url } : null)
+    } catch (error) {
+      console.error('Failed to upload image:', error)
+    } finally {
+      setUploadingImage(false)
+    }
+  }
 
   async function handleOnboardingComplete(data: {
     gender: string
@@ -118,6 +146,42 @@ export default function Profile() {
   return (
     <div className="max-w-md">
       <h1 className="text-2xl font-bold mb-6">Profile</h1>
+
+      {/* Profile Image */}
+      <div className="flex flex-col items-center mb-8">
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={uploadingImage}
+          className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-zinc-700 hover:border-indigo-500 transition-colors"
+        >
+          {profile?.profileImageUrl ? (
+            <img
+              src={profile.profileImageUrl}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
+              <svg className="w-8 h-8 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+          )}
+          {uploadingImage && (
+            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+              <span className="text-sm">Uploading...</span>
+            </div>
+          )}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+        />
+        <p className="text-sm text-zinc-500 mt-2">Tap to change photo</p>
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 mb-8">
         <div>

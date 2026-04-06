@@ -1,16 +1,53 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
+import { useState, useEffect, useCallback } from 'react'
 import Layout from './components/Layout'
+import Onboarding from './components/Onboarding'
 import Dashboard from './pages/Dashboard'
 import Workouts from './pages/Workouts'
 import Food from './pages/Food'
 import Weight from './pages/Weight'
 import Profile from './pages/Profile'
+import { useApi } from './hooks/useApi'
 
-function App() {
+function AppContent() {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0()
+  const { fetchWithAuth } = useApi()
+  const [hasProfile, setHasProfile] = useState<boolean | null>(null)
+  const [checkingProfile, setCheckingProfile] = useState(true)
 
-  if (isLoading) {
+  const checkProfile = useCallback(async () => {
+    try {
+      await fetchWithAuth('/api/Profile')
+      setHasProfile(true)
+    } catch {
+      setHasProfile(false)
+    } finally {
+      setCheckingProfile(false)
+    }
+  }, [fetchWithAuth])
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      checkProfile()
+    }
+  }, [isAuthenticated, checkProfile])
+
+  async function handleOnboardingComplete(data: {
+    gender: string
+    weight: number
+    height: number
+    age: number
+    goal: string
+  }) {
+    await fetchWithAuth('/api/Profile', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+    setHasProfile(true)
+  }
+
+  if (isLoading || (isAuthenticated && checkingProfile)) {
     return (
       <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
         <p>Loading...</p>
@@ -33,6 +70,10 @@ function App() {
     )
   }
 
+  if (!hasProfile) {
+    return <Onboarding onComplete={handleOnboardingComplete} />
+  }
+
   return (
     <BrowserRouter>
       <Routes>
@@ -47,6 +88,10 @@ function App() {
       </Routes>
     </BrowserRouter>
   )
+}
+
+function App() {
+  return <AppContent />
 }
 
 export default App

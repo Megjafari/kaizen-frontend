@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useApi } from '../hooks/useApi'
+import Onboarding from '../components/Onboarding'
 
 interface UserProfile {
   id: number
@@ -14,11 +15,12 @@ interface UserProfile {
 export default function Profile() {
   const { logout } = useAuth0()
   const { fetchWithAuth } = useApi()
-  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   const [height, setHeight] = useState('')
   const [weight, setWeight] = useState('')
@@ -26,25 +28,48 @@ export default function Profile() {
   const [gender, setGender] = useState('')
   const [goal, setGoal] = useState('')
 
-const loadProfile = useCallback(async () => {
-  try {
-    const data = await fetchWithAuth('/api/Profile')
-    setProfile(data)
-    setHeight(data.height.toString())
-    setWeight(data.weight.toString())
-    setAge(data.age.toString())
-    setGender(data.gender)
-    setGoal(data.goal)
-  } catch {
-    // 404 is expected for new users - ignore it
-  } finally {
-    setLoading(false)
-  }
-}, [fetchWithAuth])
+  const loadProfile = useCallback(async () => {
+    try {
+      const data = await fetchWithAuth('/api/Profile')
+      setProfile(data)
+      setHeight(data.height.toString())
+      setWeight(data.weight.toString())
+      setAge(data.age.toString())
+      setGender(data.gender)
+      setGoal(data.goal)
+    } catch {
+      // No profile - show onboarding
+      setShowOnboarding(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchWithAuth])
 
   useEffect(() => {
     loadProfile()
   }, [loadProfile])
+
+  async function handleOnboardingComplete(data: {
+    gender: string
+    weight: number
+    height: number
+    age: number
+    goal: string
+  }) {
+    setSaving(true)
+    try {
+      await fetchWithAuth('/api/Profile', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      })
+      setShowOnboarding(false)
+      await loadProfile()
+    } catch (error) {
+      console.error('Failed to create profile:', error)
+    } finally {
+      setSaving(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -59,17 +84,10 @@ const loadProfile = useCallback(async () => {
     }
 
     try {
-      if (profile) {
-        await fetchWithAuth('/api/Profile', {
-          method: 'PUT',
-          body: JSON.stringify(payload),
-        })
-      } else {
-        await fetchWithAuth('/api/Profile', {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        })
-      }
+      await fetchWithAuth('/api/Profile', {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      })
       await loadProfile()
     } catch (error) {
       console.error('Failed to save profile:', error)
@@ -91,6 +109,10 @@ const loadProfile = useCallback(async () => {
 
   if (loading) {
     return <p>Loading...</p>
+  }
+
+  if (showOnboarding) {
+    return <Onboarding onComplete={handleOnboardingComplete} />
   }
 
   return (
@@ -166,7 +188,7 @@ const loadProfile = useCallback(async () => {
           disabled={saving}
           className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700 disabled:opacity-50"
         >
-          {saving ? 'Saving...' : profile ? 'Update' : 'Create'}
+          {saving ? 'Saving...' : 'Update'}
         </button>
       </form>
 

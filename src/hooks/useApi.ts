@@ -20,9 +20,15 @@ export function useApi() {
       })
 
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error('API Error:', response.status, errorText)
+        if (response.status !== 404) {
+          const errorText = await response.text()
+          console.error('API Error:', response.status, errorText)
+        }
         throw new Error(`API error: ${response.status}`)
+      }
+
+      if (response.status === 204) {
+        return null
       }
 
       return response.json()

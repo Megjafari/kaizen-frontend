@@ -92,7 +92,7 @@ export default function Layout() {
           <span className="text-xl font-bold text-shadow">Kaizen</span>
           <NavLink to="/" className={desktopLinkClass}>Dashboard</NavLink>
           <NavLink to="/workouts" className={desktopLinkClass}>Workouts</NavLink>
-          <NavLink to="/food" className={desktopLinkClass}>Food</NavLink>
+          <NavLink to="/progress" className={desktopLinkClass}>Progress</NavLink>
           <NavLink to="/profile" className={desktopLinkClass}>Profile</NavLink>
         </div>
       </nav>
@@ -261,9 +261,9 @@ export default function Layout() {
           </svg>
         </button>
 
-        <NavLink to="/food" className={linkClass}>
+        <NavLink to="/progress" className={linkClass}>
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </NavLink>
         <NavLink to="/profile" className={linkClass}>

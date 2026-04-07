@@ -175,8 +175,8 @@ export default function Food() {
       <div className="max-w-lg mx-auto p-4">
         {/* Header */}
         <div className="mb-6 pt-4">
-          <h1 className="text-4xl font-black tracking-tight text-white">FOOD</h1>
-          <p className="text-slate-400">Track your nutrition</p>
+          <h1 className="text-4xl font-black tracking-tight text-white text-shadow">FOOD</h1>
+          <p className="text-slate-400 text-shadow-sm">Track your nutrition</p>
         </div>
 
         {/* Daily Summary */}

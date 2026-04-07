@@ -98,10 +98,10 @@ export default function Dashboard() {
 
       <div className="max-w-lg mx-auto p-4">
         {/* Header */}
-        <div className="mb-8 pt-4">
-          <p className="text-cyan-400 font-medium">{dayName}</p>
-          <h1 className="text-4xl font-black tracking-tight text-white">DIARY</h1>
-          <p className="text-slate-400">Today • {dateStr}</p>
+        <div className="mb-6 pt-4">
+          <p className="text-white/70 text-sm text-shadow-sm">{dayName}</p>
+          <h1 className="text-4xl font-black tracking-tight text-white text-shadow">DIARY</h1>
+          <p className="text-cyan-300 text-shadow-sm">Today • {dateStr}</p>
         </div>
 
         {/* Main Stats Grid */}

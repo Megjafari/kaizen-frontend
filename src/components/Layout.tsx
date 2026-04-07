@@ -36,16 +36,6 @@ export default function Layout() {
         </button>
       </nav>
 
-      {/* Mobile header */}
-      <header className="md:hidden flex items-center justify-between p-4 border-b border-white/10 bg-black/20 backdrop-blur-sm">
-        <span className="text-xl font-bold">Kaizen</span>
-        <button
-          onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
-          className="text-sm text-zinc-400 hover:text-white"
-        >
-          Log out
-        </button>
-      </header>
 
       <main className="p-4">
         <Outlet />

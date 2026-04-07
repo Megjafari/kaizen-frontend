@@ -4,3 +4,10 @@
 html {
   background-color: #020617;
 }
+.text-shadow {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.text-shadow-sm {
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}

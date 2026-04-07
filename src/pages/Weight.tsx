@@ -93,8 +93,8 @@ export default function Weight() {
       <div className="max-w-lg mx-auto p-4">
         {/* Header */}
         <div className="mb-6 pt-4">
-          <h1 className="text-4xl font-black tracking-tight text-white">WEIGHT</h1>
-          <p className="text-slate-400">Track your progress</p>
+          <h1 className="text-4xl font-black tracking-tight text-white text-shadow">WEIGHT</h1>
+          <p className="text-slate-400 text-shadow-sm">Track your progress</p>
         </div>
 
         {/* Current Weight Card */}

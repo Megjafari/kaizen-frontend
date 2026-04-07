@@ -6,7 +6,6 @@ import Onboarding from './components/Onboarding'
 import Dashboard from './pages/Dashboard'
 import Workouts from './pages/Workouts'
 import Food from './pages/Food'
-import Weight from './pages/Weight'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 import PageTransition from './components/PageTransition'
@@ -14,6 +13,7 @@ import Grainient from './components/Grainient'
 import { useApi } from './hooks/useApi'
 import { ProfileProvider } from './context/ProfileProvider'
 import { useProfile } from './hooks/useProfile'
+import Progress from './pages/Progress'
 
 function AnimatedRoutes() {
   const location = useLocation()
@@ -25,10 +25,10 @@ function AnimatedRoutes() {
           <Route path="/" element={<PageTransition><Dashboard /></PageTransition>} />
           <Route path="/workouts" element={<PageTransition><Workouts /></PageTransition>} />
           <Route path="/food" element={<PageTransition><Food /></PageTransition>} />
-          <Route path="/weight" element={<PageTransition><Weight /></PageTransition>} />
           <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
           <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
           <Route path="*" element={<Navigate to="/" />} />
+          <Route path="/progress" element={<PageTransition><Progress /></PageTransition>} />
         </Route>
       </Routes>
     </AnimatePresence>

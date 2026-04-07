@@ -34,15 +34,25 @@ export default function Profile() {
   const [gender, setGender] = useState('')
   const [goal, setGoal] = useState('')
 
+  const [latestWeight, setLatestWeight] = useState<number | null>(null)
+
   const loadProfile = useCallback(async () => {
     try {
-      const data = await fetchWithAuth('/api/Profile')
-      setProfile(data)
-      setHeight(data.height.toString())
-      setWeight(data.weight.toString())
-      setAge(data.age.toString())
-      setGender(data.gender)
-      setGoal(data.goal)
+      const [profileData, weightData] = await Promise.all([
+        fetchWithAuth('/api/Profile'),
+        fetchWithAuth('/api/Weight'),
+      ])
+      setProfile(profileData)
+      setHeight(profileData.height.toString())
+      setWeight(profileData.weight.toString())
+      setAge(profileData.age.toString())
+      setGender(profileData.gender)
+      setGoal(profileData.goal)
+      
+      // Sätt senaste loggade vikten
+      if (weightData && weightData.length > 0) {
+        setLatestWeight(weightData[0].weight)
+      }
     } catch {
       setShowOnboarding(true)
     } finally {
@@ -225,7 +235,9 @@ export default function Profile() {
               <p className="text-xs text-slate-400">cm</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-black text-slate-900">{weight}</p>
+              <p className="text-2xl font-black text-slate-900">
+                {latestWeight !== null ? latestWeight : weight}
+              </p>
               <p className="text-xs text-slate-400">kg</p>
             </div>
             <div className="text-center">

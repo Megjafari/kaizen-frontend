@@ -80,20 +80,20 @@ export default function Dashboard() {
     <div className="min-h-screen relative -m-4">
       {/* Animated Background */}
       <div className="fixed inset-0 -z-10">
-<Grainient
-  color1="#0f172a"
-  color2="#67e8f9"
-  color3="#020617"
-  timeSpeed={0.1}
-  warpStrength={0.3}
-  warpFrequency={2}
-  warpSpeed={0.5}
-  warpAmplitude={100}
-  grainAmount={0.03}
-  contrast={1.2}
-  saturation={0.8}
-  zoom={1.2}
-/>
+      <Grainient
+        color1="#0f172a"
+        color2="#67e8f9"
+        color3="#020617"
+        timeSpeed={0.1}
+        warpStrength={0.3}
+        warpFrequency={2}
+        warpSpeed={0.5}
+        warpAmplitude={100}
+        grainAmount={0.03}
+        contrast={1.2}
+        saturation={0.8}
+        zoom={1.2}
+      />
       </div>
 
       <div className="max-w-lg mx-auto p-4">

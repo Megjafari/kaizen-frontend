@@ -7,6 +7,7 @@ import Workouts from './pages/Workouts'
 import Food from './pages/Food'
 import Weight from './pages/Weight'
 import Profile from './pages/Profile'
+import Admin from './pages/Admin'
 import { useApi } from './hooks/useApi'
 import { ProfileProvider } from './context/ProfileProvider'
 import { useProfile } from './hooks/useProfile'
@@ -58,25 +59,26 @@ function AppContent() {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/workouts" element={<Workouts />} />
-          <Route path="/food" element={<Food />} />
-          <Route path="/weight" element={<Weight />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/workouts" element={<Workouts />} />
+        <Route path="/food" element={<Food />} />
+        <Route path="/weight" element={<Weight />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Route>
+    </Routes>
   )
 }
 
 export default function App() {
   return (
-    <ProfileProvider>
-      <AppContent />
-    </ProfileProvider>
+    <BrowserRouter>
+      <ProfileProvider>
+        <AppContent />
+      </ProfileProvider>
+    </BrowserRouter>
   )
 }

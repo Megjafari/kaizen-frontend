@@ -6,6 +6,7 @@ export interface Profile {
   gender: string
   goal: string
   profileImageUrl?: string
+  isAdmin: boolean
 }
 
 export interface ProfileContextType {

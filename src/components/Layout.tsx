@@ -17,9 +17,9 @@ export default function Layout() {
     `px-3 py-2 rounded ${isActive ? 'bg-zinc-800' : 'hover:bg-zinc-800'}`
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 md:pb-0">
+    <div className="min-h-screen text-white pb-24 md:pb-0">
       {/* Desktop nav */}
-      <nav className="hidden md:flex items-center justify-between p-4 border-b border-zinc-800">
+      <nav className="hidden md:flex items-center justify-between p-4 border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <span className="text-xl font-bold">Kaizen</span>
           <NavLink to="/" className={desktopLinkClass}>Dashboard</NavLink>
@@ -37,7 +37,7 @@ export default function Layout() {
       </nav>
 
       {/* Mobile header */}
-      <header className="md:hidden flex items-center justify-between p-4 border-b border-zinc-800">
+      <header className="md:hidden flex items-center justify-between p-4 border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <span className="text-xl font-bold">Kaizen</span>
         <button
           onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
@@ -52,7 +52,7 @@ export default function Layout() {
       </main>
 
       {/* Mobile bottom nav - liquid glass */}
-      <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-white/5 backdrop-blur-xl rounded-full px-2 py-2 flex gap-2 border border-white/5">
+<nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-xl rounded-full px-2 py-2 flex gap-2 border border-white/10">
         <NavLink to="/" className={linkClass}>
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />

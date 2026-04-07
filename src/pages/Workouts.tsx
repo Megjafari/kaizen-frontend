@@ -156,19 +156,19 @@ export default function Workouts() {
       </div>
 
       <div className="max-w-lg mx-auto p-4">
-        {/* Header */}
-        <div className="mb-6 pt-4 flex justify-between items-start">
-          <div>
-            <h1 className="text-4xl font-black tracking-tight text-white">WORKOUT</h1>
-            <p className="text-slate-400">Log your training</p>
-          </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-4 py-2 bg-cyan-500 text-white rounded-xl font-medium hover:bg-cyan-600 transition-colors"
-          >
-            {showForm ? 'Cancel' : '+ New'}
-          </button>
+      {/* Header */}
+      <div className="mb-6 pt-4 flex justify-between items-start">
+        <div>
+          <h1 className="text-4xl font-black tracking-tight text-white text-shadow">WORKOUT</h1>
+          <p className="text-slate-400 text-shadow-sm">Log your training</p>
         </div>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="px-4 py-2 bg-cyan-500 text-white rounded-xl font-medium hover:bg-cyan-600 transition-colors"
+        >
+          {showForm ? 'Cancel' : '+ New'}
+        </button>
+      </div>
 
         {/* Form */}
         {showForm && (

@@ -176,8 +176,8 @@ export default function Profile() {
       <div className="max-w-lg mx-auto p-4">
         {/* Header */}
         <div className="mb-8 pt-4">
-          <h1 className="text-4xl font-black tracking-tight text-white">PROFILE</h1>
-          <p className="text-slate-400">Manage your account</p>
+          <h1 className="text-4xl font-black tracking-tight text-white text-shadow">PROFILE</h1>
+          <p className="text-slate-400 text-shadow-sm">Manage your account</p>
         </div>
 
         {/* Profile Card */}

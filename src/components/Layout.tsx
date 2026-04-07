@@ -17,9 +17,9 @@ export default function Layout() {
     `px-3 py-2 rounded ${isActive ? 'bg-zinc-800' : 'hover:bg-zinc-800'}`
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pb-24 md:pb-0">
+    <div className="min-h-screen text-white pb-24 md:pb-0">
       {/* Desktop nav */}
-      <nav className="hidden md:flex items-center justify-between p-4 border-b border-zinc-800">
+      <nav className="hidden md:flex items-center justify-between p-4 border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <span className="text-xl font-bold">Kaizen</span>
           <NavLink to="/" className={desktopLinkClass}>Dashboard</NavLink>
@@ -37,7 +37,7 @@ export default function Layout() {
       </nav>
 
       {/* Mobile header */}
-      <header className="md:hidden flex items-center justify-between p-4 border-b border-zinc-800">
+      <header className="md:hidden flex items-center justify-between p-4 border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <span className="text-xl font-bold">Kaizen</span>
         <button
           onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useApi } from '../hooks/useApi'
+import Grainient from '../components/Grainient'
 
 interface Exercise {
   id: number
@@ -102,8 +103,6 @@ export default function Workouts() {
       })),
     }
 
-    console.log('Sending payload:', payload) // Debug
-
     try {
       await fetchWithAuth('/api/Workout/logs', {
         method: 'POST',
@@ -129,162 +128,246 @@ export default function Workouts() {
   }
 
   if (loading) {
-    return <p>Loading...</p>
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   return (
-    <div className="max-w-2xl">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Workouts</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 bg-indigo-600 rounded hover:bg-indigo-700"
-        >
-          {showForm ? 'Cancel' : 'New Workout'}
-        </button>
+    <div className="min-h-screen relative -m-4">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10">
+        <Grainient
+          color1="#0f172a"
+          color2="#67e8f9"
+          color3="#020617"
+          timeSpeed={0.1}
+          warpStrength={0.3}
+          warpFrequency={2}
+          warpSpeed={0.5}
+          warpAmplitude={100}
+          grainAmount={0.03}
+          contrast={1.2}
+          saturation={0.8}
+          zoom={1.2}
+        />
       </div>
 
-      {showForm && (
-        <form onSubmit={handleSubmit} className="mb-8 p-4 bg-zinc-900 rounded-lg">
-          <div className="mb-4">
-            <label className="block text-sm text-zinc-400 mb-1">Workout Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded"
-              required
-            />
+      <div className="max-w-lg mx-auto p-4">
+        {/* Header */}
+        <div className="mb-6 pt-4 flex justify-between items-start">
+          <div>
+            <h1 className="text-4xl font-black tracking-tight text-white">WORKOUT</h1>
+            <p className="text-slate-400">Log your training</p>
           </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="px-4 py-2 bg-cyan-500 text-white rounded-xl font-medium hover:bg-cyan-600 transition-colors"
+          >
+            {showForm ? 'Cancel' : '+ New'}
+          </button>
+        </div>
 
-          <div className="mb-4">
-            <label className="block text-sm text-zinc-400 mb-1">Notes</label>
-            <input
-              type="text"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-3 py-2 bg-zinc-800 border border-zinc-700 rounded"
-            />
-          </div>
-
-          <div className="mb-4">
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-sm text-zinc-400">Exercises</label>
-              <button
-                type="button"
-                onClick={addExercise}
-                className="text-sm text-indigo-400 hover:text-indigo-300"
-              >
-                + Add Exercise
-              </button>
-            </div>
-
-            {exercises.map((ex, i) => (
-              <div key={i} className="flex gap-2 mb-2">
+        {/* Form */}
+        {showForm && (
+          <div className="bg-white rounded-3xl p-6 shadow-lg mb-4">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Log Workout</h2>
+            
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm text-slate-500 mb-1">Workout Name</label>
                 <input
                   type="text"
-                  placeholder="Exercise"
-                  value={ex.exerciseName}
-                  onChange={(e) => updateExercise(i, 'exerciseName', e.target.value)}
-                  className="flex-1 px-2 py-1 bg-zinc-800 border border-zinc-700 rounded text-sm"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-cyan-400 text-slate-900"
+                  placeholder="e.g. Push Day"
                   required
                 />
-                <input
-                  type="number"
-                  placeholder="Sets"
-                  value={ex.sets}
-                  onChange={(e) => updateExercise(i, 'sets', parseInt(e.target.value))}
-                  className="w-16 px-2 py-1 bg-zinc-800 border border-zinc-700 rounded text-sm"
-                  required
-                />
-                <input
-                  type="number"
-                  placeholder="Reps"
-                  value={ex.reps}
-                  onChange={(e) => updateExercise(i, 'reps', parseInt(e.target.value))}
-                  className="w-16 px-2 py-1 bg-zinc-800 border border-zinc-700 rounded text-sm"
-                  required
-                />
-                <input
-                  type="number"
-                  placeholder="kg"
-                  value={ex.weight}
-                  onChange={(e) => updateExercise(i, 'weight', parseFloat(e.target.value))}
-                  className="w-16 px-2 py-1 bg-zinc-800 border border-zinc-700 rounded text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={() => removeExercise(i)}
-                  className="text-red-400 hover:text-red-300"
-                >
-                  ×
-                </button>
               </div>
-            ))}
-          </div>
 
-          <button
-            type="submit"
-            className="px-4 py-2 bg-green-600 rounded hover:bg-green-700"
-          >
-            Save Workout
-          </button>
-        </form>
-      )}
+              <div>
+                <label className="block text-sm text-slate-500 mb-1">Notes (optional)</label>
+                <input
+                  type="text"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-cyan-400 text-slate-900"
+                  placeholder="How did it go?"
+                />
+              </div>
 
-      {!showForm && templates.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Templates</h2>
-          <div className="grid gap-2">
-            {templates.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => applyTemplate(t)}
-                className="text-left p-3 bg-zinc-900 rounded hover:bg-zinc-800"
-              >
-                <span className="font-medium">{t.name}</span>
-                <span className="text-zinc-400 text-sm ml-2">({t.level})</span>
-                <p className="text-sm text-zinc-500">{t.description}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <h2 className="text-lg font-semibold mb-3">Recent Workouts</h2>
-      {logs.length === 0 ? (
-        <p className="text-zinc-400">No workouts logged yet.</p>
-      ) : (
-        <div className="space-y-3">
-          {logs.map((log) => (
-            <div key={log.id} className="p-4 bg-zinc-900 rounded-lg">
-              <div className="flex justify-between">
-                <div>
-                  <span className="font-medium">{log.name}</span>
-                  <span className="text-zinc-400 text-sm ml-2">
-                    {new Date(log.date).toLocaleDateString()}
-                  </span>
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <label className="text-sm text-slate-500">Exercises</label>
+                  <button
+                    type="button"
+                    onClick={addExercise}
+                    className="text-sm text-cyan-500 font-medium hover:text-cyan-600"
+                  >
+                    + Add Exercise
+                  </button>
                 </div>
-                <button
-                  onClick={() => deleteLog(log.id)}
-                  className="text-red-400 hover:text-red-300 text-sm"
-                >
-                  Delete
-                </button>
-              </div>
-              {log.exercises.length > 0 && (
-                <ul className="mt-2 text-sm text-zinc-400">
-                  {log.exercises.map((ex, i) => (
-                    <li key={i}>
-                      {ex.exerciseName}: {ex.sets}×{ex.reps} @ {ex.weight}kg
-                    </li>
+
+                <div className="space-y-3">
+                  {exercises.map((ex, i) => (
+                    <div key={i} className="bg-slate-50 rounded-xl p-3">
+                      <div className="flex justify-between items-center mb-2">
+                        <input
+                          type="text"
+                          placeholder="Exercise name"
+                          value={ex.exerciseName}
+                          onChange={(e) => updateExercise(i, 'exerciseName', e.target.value)}
+                          className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-cyan-400"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeExercise(i)}
+                          className="ml-2 w-8 h-8 flex items-center justify-center text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="text-xs text-slate-400">Sets</label>
+                          <input
+                            type="number"
+                            value={ex.sets}
+                            onChange={(e) => updateExercise(i, 'sets', parseInt(e.target.value))}
+                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-cyan-400"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-slate-400">Reps</label>
+                          <input
+                            type="number"
+                            value={ex.reps}
+                            onChange={(e) => updateExercise(i, 'reps', parseInt(e.target.value))}
+                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-cyan-400"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-slate-400">kg</label>
+                          <input
+                            type="number"
+                            value={ex.weight}
+                            onChange={(e) => updateExercise(i, 'weight', parseFloat(e.target.value))}
+                            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 text-sm focus:outline-none focus:border-cyan-400"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   ))}
-                </ul>
-              )}
+                </div>
+
+                {exercises.length === 0 && (
+                  <p className="text-center text-slate-400 text-sm py-4">
+                    No exercises added yet
+                  </p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-4 bg-cyan-500 text-white rounded-xl font-medium hover:bg-cyan-600 transition-colors"
+              >
+                Save Workout
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* Templates */}
+        {!showForm && templates.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-white/70 text-sm mb-3">Quick Start Templates</h2>
+            <div className="grid gap-2">
+              {templates.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => applyTemplate(t)}
+                  className="text-left bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <span className="font-bold text-slate-900">{t.name}</span>
+                      <span className="ml-2 text-xs px-2 py-1 bg-violet-100 text-violet-600 rounded-full">
+                        {t.level}
+                      </span>
+                    </div>
+                    <div className="w-8 h-8 bg-cyan-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-4 h-4 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-500 mt-1">{t.description}</p>
+                  <p className="text-xs text-slate-400 mt-2">{t.exercises.length} exercises</p>
+                </button>
+              ))}
             </div>
-          ))}
+          </div>
+        )}
+
+        {/* Recent Workouts */}
+        <div>
+          <h2 className="text-white/70 text-sm mb-3">Recent Workouts</h2>
+          {logs.length === 0 ? (
+            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 text-center">
+              <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg className="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <p className="text-white/50">No workouts logged yet</p>
+              <p className="text-white/30 text-sm">Start a workout to see it here</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {logs.map((log) => (
+                <div key={log.id} className="bg-white rounded-2xl p-4 shadow-lg">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className="font-bold text-slate-900">{log.name}</span>
+                      <p className="text-xs text-slate-400">
+                        {new Date(log.date).toLocaleDateString('en-US', { 
+                          weekday: 'short', 
+                          month: 'short', 
+                          day: 'numeric' 
+                        })}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => deleteLog(log.id)}
+                      className="text-red-400 hover:text-red-500 text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  {log.exercises.length > 0 && (
+                    <div className="space-y-1">
+                      {log.exercises.map((ex, i) => (
+                        <div key={i} className="flex justify-between text-sm">
+                          <span className="text-slate-600">{ex.exerciseName}</span>
+                          <span className="text-slate-400">
+                            {ex.sets}×{ex.reps} @ {ex.weight}kg
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }

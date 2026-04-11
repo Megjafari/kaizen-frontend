@@ -14,8 +14,8 @@ export default defineConfig({
         name: 'Kaizen',
         short_name: 'Kaizen',
         description: 'Track workouts, food and weight',
-        theme_color: '#09090b',
-        background_color: '#09090b',
+        theme_color: '#020617',
+        background_color: '#020617',
         display: 'standalone',
         icons: [
           {
@@ -27,6 +27,12 @@ export default defineConfig({
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
       }

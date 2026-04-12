@@ -40,7 +40,11 @@ export default function Layout() {
     }`
 
   const desktopLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `px-3 py-2 rounded ${isActive ? 'bg-zinc-800' : 'hover:bg-zinc-800'}`
+    `px-4 py-2 rounded-full text-sm font-medium transition-all ${
+      isActive 
+        ? 'bg-white/20 text-white' 
+        : 'text-white/60 hover:text-white hover:bg-white/10'
+    }`
 
   function handleQuickAction(action: string) {
     setShowQuickAdd(false)
@@ -86,17 +90,17 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen text-white pb-24 md:pb-0">
-      {/* Desktop nav */}
-      <nav className="hidden md:flex items-center justify-between p-4">
-        <div className="flex items-center gap-4">
-          <span className="text-xl font-bold text-shadow">Kaizen</span>
-          <NavLink to="/" className={desktopLinkClass}>Dashboard</NavLink>
-          <NavLink to="/workouts" className={desktopLinkClass}>Workouts</NavLink>
-          <NavLink to="/progress" className={desktopLinkClass}>Progress</NavLink>
-          <NavLink to="/profile" className={desktopLinkClass}>Profile</NavLink>
-        </div>
-      </nav>
-
+  {/* Desktop nav */}
+  <nav className="hidden md:flex items-center justify-between p-4">
+    <img src="/pwa-192x192.png" alt="Kaizen" className="w-10 h-10 rounded-xl" />
+    <div className="flex items-center gap-1 bg-white/10 backdrop-blur-xl rounded-full px-2 py-2 border border-white/10">
+      <NavLink to="/" className={desktopLinkClass}>Dashboard</NavLink>
+      <NavLink to="/workouts" className={desktopLinkClass}>Workouts</NavLink>
+      <NavLink to="/progress" className={desktopLinkClass}>Progress</NavLink>
+      <NavLink to="/profile" className={desktopLinkClass}>Profile</NavLink>
+    </div>
+    <div className="w-10" />
+  </nav>
       <main className="p-4">
         <Outlet />
       </main>

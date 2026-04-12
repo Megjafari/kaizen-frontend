@@ -63,7 +63,7 @@ Kaizen is a modern fitness tracking Progressive Web App that helps users log wor
 - **Onboarding Wizard** - Guided setup for new users with custom number picker
 - **Animated Background** - WebGL-powered gradient animation (Grainient)
 - **Smooth Transitions** - Page transitions with Framer Motion
-- **PWA Support** - Installable on mobile devices, works offline
+- **PWA Support** - Installable on mobile devices
 
 ---
 
@@ -230,7 +230,6 @@ Kaizen is a fully installable Progressive Web App.
 - Installable on iOS, Android, and desktop
 - Custom app icon and splash screen
 - Standalone display mode (no browser UI)
-- Offline-capable with service worker
 
 ### Installation
 

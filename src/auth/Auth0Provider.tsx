@@ -17,9 +17,11 @@ export default function Auth0ProviderWithNavigate({ children }: Props) {
       authorizationParams={{
         redirect_uri: window.location.origin,
         audience: audience,
+        scope: 'openid profile email offline_access',
       }}
       cacheLocation="localstorage"
       useRefreshTokens={true}
+      useRefreshTokensFallback={true}
     >
       {children}
     </Auth0Provider>

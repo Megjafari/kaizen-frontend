@@ -35,8 +35,8 @@ export default function Dashboard() {
       
       const [summaryData, foodToday, workoutsToday] = await Promise.all([
         fetchWithAuth('/api/WeeklySummary'),
-        fetchWithAuth(`/api/Food?date=${today}`).catch(() => []),
-        fetchWithAuth(`/api/Workout?date=${today}`).catch(() => []),
+        fetchWithAuth(`/api/Food/logs?date=${today}`).catch(() => []),
+        fetchWithAuth(`/api/Workout/logs?date=${today}`).catch(() => []),
       ])
       
       setSummary(summaryData)

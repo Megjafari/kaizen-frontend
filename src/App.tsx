@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react'
 import { AnimatePresence } from 'framer-motion'
@@ -10,6 +11,7 @@ import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 import PageTransition from './components/PageTransition'
 import Grainient from './components/Grainient'
+import SplashScreen from './components/SplashScreen'
 import { useApi } from './hooks/useApi'
 import { ProfileProvider } from './context/ProfileProvider'
 import { useProfile } from './hooks/useProfile'
@@ -27,8 +29,8 @@ function AnimatedRoutes() {
           <Route path="/food" element={<PageTransition><Food /></PageTransition>} />
           <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
           <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
-          <Route path="*" element={<Navigate to="/" />} />
           <Route path="/progress" element={<PageTransition><Progress /></PageTransition>} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>
     </AnimatePresence>
@@ -55,21 +57,18 @@ function AppContent() {
   }
 
   if (isLoading || (isAuthenticated && profileLoading)) {
-    return (
-      <div className="min-h-screen text-white flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
+    return <SplashScreen />
   }
 
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen text-white flex flex-col items-center justify-center gap-4">
+        <img src="/pwa-192x192.png" alt="Kaizen" className="w-24 h-24 rounded-2xl mb-4" />
         <h1 className="text-4xl font-bold">Kaizen</h1>
         <p className="text-zinc-400">Track your fitness journey</p>
         <button
           onClick={() => loginWithRedirect()}
-          className="px-6 py-3 bg-indigo-600 rounded-lg hover:bg-indigo-700 font-medium"
+          className="px-6 py-3 bg-cyan-500 rounded-xl hover:bg-cyan-600 font-medium mt-4"
         >
           Log in to continue
         </button>
@@ -85,6 +84,17 @@ function AppContent() {
 }
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 1500)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (showSplash) {
+    return <SplashScreen />
+  }
+
   return (
     <BrowserRouter>
       {/* Global Background - alltid synlig */}

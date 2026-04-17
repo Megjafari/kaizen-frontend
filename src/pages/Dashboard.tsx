@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useApi } from '../hooks/useApi'
-import Grainient from '../components/Grainient'
 
 interface WeeklySummary {
   weekOf: string
@@ -22,32 +21,47 @@ interface TodayStats {
   workouts: number
 }
 
+interface WeightLog {
+  id: number
+  date: string
+  weight: number
+}
+
 export default function Dashboard() {
   const { user } = useAuth0()
   const { fetchWithAuth } = useApi()
   const [summary, setSummary] = useState<WeeklySummary | null>(null)
   const [todayStats, setTodayStats] = useState<TodayStats>({ calories: 0, protein: 0, carbs: 0, fat: 0, workouts: 0 })
+  const [weightHistory, setWeightHistory] = useState<WeightLog[]>([])
   const [loading, setLoading] = useState(true)
 
   const loadData = useCallback(async () => {
     try {
       const today = new Date().toISOString().split('T')[0]
       
-      const [summaryData, foodToday, workoutsToday] = await Promise.all([
+      const [summaryData, foodToday, workoutsToday, weightData] = await Promise.all([
         fetchWithAuth('/api/WeeklySummary'),
         fetchWithAuth(`/api/Food/logs?date=${today}`).catch(() => []),
         fetchWithAuth(`/api/Workout/logs?date=${today}`).catch(() => []),
+        fetchWithAuth('/api/Weight').catch(() => []),
       ])
       
       setSummary(summaryData)
       
-      const foodTotals = (foodToday || []).reduce((acc: TodayStats, log: { calories: number; protein: number; carbs: number; fat: number }) => ({
-        calories: acc.calories + (log.calories || 0),
-        protein: acc.protein + (log.protein || 0),
-        carbs: acc.carbs + (log.carbs || 0),
-        fat: acc.fat + (log.fat || 0),
-        workouts: acc.workouts
-      }), { calories: 0, protein: 0, carbs: 0, fat: 0, workouts: 0 })
+      // Get last 30 days of weight data
+      const thirtyDaysAgo = new Date()
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+      const recentWeights = (weightData || [])
+        .filter((w: WeightLog) => new Date(w.date) >= thirtyDaysAgo)
+        .sort((a: WeightLog, b: WeightLog) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      setWeightHistory(recentWeights)
+          const foodTotals = (foodToday || []).reduce((acc: TodayStats, log: { amountGrams: number; ingredient: { calories: number; protein: number; carbs: number; fat: number } }) => ({
+      calories: acc.calories + (log.ingredient.calories * log.amountGrams / 100),
+      protein: acc.protein + (log.ingredient.protein * log.amountGrams / 100),
+      carbs: acc.carbs + (log.ingredient.carbs * log.amountGrams / 100),
+      fat: acc.fat + (log.ingredient.fat * log.amountGrams / 100),
+      workouts: acc.workouts
+    }), { calories: 0, protein: 0, carbs: 0, fat: 0, workouts: 0 })
       
       setTodayStats({
         ...foodTotals,
@@ -68,6 +82,12 @@ export default function Dashboard() {
   const dayName = today.toLocaleDateString('en-US', { weekday: 'long' })
   const dateStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 
+  // Weight graph calculations
+  const weights = weightHistory.map(w => w.weight)
+  const minWeight = weights.length > 0 ? Math.min(...weights) - 1 : 0
+  const maxWeight = weights.length > 0 ? Math.max(...weights) + 1 : 100
+  const weightRange = maxWeight - minWeight || 1
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -78,24 +98,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen relative -m-4">
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10">
-      <Grainient
-        color1="#0f172a"
-        color2="#67e8f9"
-        color3="#020617"
-        timeSpeed={0.1}
-        warpStrength={0.3}
-        warpFrequency={2}
-        warpSpeed={0.5}
-        warpAmplitude={100}
-        grainAmount={0.03}
-        contrast={1.2}
-        saturation={0.8}
-        zoom={1.2}
-      />
-      </div>
-
       <div className="max-w-lg mx-auto p-4">
         {/* Header */}
         <div className="mb-6 pt-4">
@@ -174,6 +176,79 @@ export default function Dashboard() {
             <p className="text-slate-400 text-sm">kg</p>
           </div>
         </div>
+
+        {/* Weight Graph */}
+{weightHistory.length > 1 && (
+  <div className="bg-white rounded-3xl p-5 shadow-lg mb-4">
+    <div className="flex justify-between items-center mb-4">
+      <p className="text-slate-500 text-sm">Weight Trend</p>
+      <span className="text-xs text-slate-400">Last 30 days</span>
+    </div>
+    <div className="h-32 relative">
+      {/* Y-axis labels */}
+      <div className="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-xs text-slate-400 pr-2">
+        <span>{maxWeight.toFixed(0)}</span>
+        <span>{((maxWeight + minWeight) / 2).toFixed(0)}</span>
+        <span>{minWeight.toFixed(0)}</span>
+      </div>
+      
+      {/* Graph area */}
+      <div className="ml-8 h-full relative">
+        <svg className="w-full h-full" viewBox="0 0 300 100" preserveAspectRatio="none">
+          {/* Grid lines */}
+          <line x1="0" y1="0" x2="300" y2="0" stroke="#f1f5f9" strokeWidth="1" />
+          <line x1="0" y1="50" x2="300" y2="50" stroke="#f1f5f9" strokeWidth="1" />
+          <line x1="0" y1="100" x2="300" y2="100" stroke="#f1f5f9" strokeWidth="1" />
+          
+          {/* Gradient definition */}
+          <defs>
+            <linearGradient id="weightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#fb923c" />
+              <stop offset="100%" stopColor="#f97316" />
+            </linearGradient>
+          </defs>
+          
+          {/* Line chart */}
+          <polyline
+            fill="none"
+            stroke="url(#weightGradient)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            points={weightHistory.map((w, i) => {
+              const x = weightHistory.length === 1 ? 150 : (i / (weightHistory.length - 1)) * 300
+              const y = 100 - ((w.weight - minWeight) / weightRange) * 100
+              return `${x},${y}`
+            }).join(' ')}
+          />
+          
+          {/* Data points */}
+          {weightHistory.map((w, i) => {
+            const x = weightHistory.length === 1 ? 150 : (i / (weightHistory.length - 1)) * 300
+            const y = 100 - ((w.weight - minWeight) / weightRange) * 100
+            return (
+              <circle
+                key={w.id}
+                cx={x}
+                cy={y}
+                r="5"
+                fill="white"
+                stroke="#f97316"
+                strokeWidth="2"
+              />
+            )
+          })}
+        </svg>
+      </div>
+    </div>
+    
+    {/* X-axis labels */}
+    <div className="ml-8 flex justify-between mt-2 text-xs text-slate-400">
+      <span>{new Date(weightHistory[0]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+      <span>{new Date(weightHistory[weightHistory.length - 1]?.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+    </div>
+  </div>
+)}
 
         {/* Macros Card */}
         <div className="bg-white rounded-3xl p-5 shadow-lg mb-4">

@@ -172,7 +172,9 @@ export default function Dashboard() {
               </div>
               <span className="text-slate-500 text-sm">Weight</span>
             </div>
-            <p className="text-4xl font-black text-slate-900">{summary?.endWeight ?? '—'}</p>
+            <p className="text-4xl font-black text-slate-900">
+      {weightHistory.length > 0 
+    ? weightHistory[weightHistory.length - 1].weight : '—'}</p>
             <p className="text-slate-400 text-sm">kg</p>
           </div>
         </div>

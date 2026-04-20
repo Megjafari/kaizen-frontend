@@ -91,16 +91,24 @@ export default function Layout() {
   return (
     <div className="min-h-screen text-white pb-24 md:pb-0">
   {/* Desktop nav */}
-  <nav className="hidden md:flex items-center justify-between p-4">
-    <img src="/pwa-192x192.png" alt="Kaizen" className="w-10 h-10 rounded-xl" />
-    <div className="flex items-center gap-1 bg-white/10 backdrop-blur-xl rounded-full px-2 py-2 border border-white/10">
-      <NavLink to="/" className={desktopLinkClass}>Dashboard</NavLink>
-      <NavLink to="/workouts" className={desktopLinkClass}>Workouts</NavLink>
-      <NavLink to="/progress" className={desktopLinkClass}>Progress</NavLink>
-      <NavLink to="/profile" className={desktopLinkClass}>Profile</NavLink>
-    </div>
-    <div className="w-10" />
-  </nav>
+<nav className="hidden md:flex items-center justify-between p-4">
+  <img src="/pwa-192x192.png" alt="Kaizen" className="w-10 h-10 rounded-xl" />
+  <div className="flex items-center gap-1 bg-white/10 backdrop-blur-xl rounded-full px-2 py-2 border border-white/10">
+    <NavLink to="/" className={desktopLinkClass}>Dashboard</NavLink>
+    <NavLink to="/workouts" className={desktopLinkClass}>Workouts</NavLink>
+    <NavLink to="/progress" className={desktopLinkClass}>Progress</NavLink>
+    <NavLink to="/profile" className={desktopLinkClass}>Profile</NavLink>
+  </div>
+  {/* Plus-knapp för desktop */}
+  <button
+    onClick={() => setShowQuickAdd(!showQuickAdd)}
+    className="w-10 h-10 bg-cyan-500 text-white rounded-full flex items-center justify-center hover:bg-cyan-600 transition-colors"
+  >
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+  </button>
+</nav>
       <main className="p-4">
         <Outlet />
       </main>

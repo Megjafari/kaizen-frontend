@@ -48,6 +48,8 @@ Kaizen is a modern fitness tracking Progressive Web App that helps users log wor
 
 **Backend API:** [https://kaizen-api-production-ce18.up.railway.app](https://kaizen-api-production-ce18.up.railway.app)
 
+**Backend repo:** [https://github.com/Megjafari/kaizen-API](https://github.com/Megjafari/kaizen-API)
+
 ---
 
 ## Features

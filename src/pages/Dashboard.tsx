@@ -55,13 +55,13 @@ export default function Dashboard() {
         .filter((w: WeightLog) => new Date(w.date) >= thirtyDaysAgo)
         .sort((a: WeightLog, b: WeightLog) => new Date(a.date).getTime() - new Date(b.date).getTime())
       setWeightHistory(recentWeights)
-          const foodTotals = (foodToday || []).reduce((acc: TodayStats, log: { amountGrams: number; ingredient: { calories: number; protein: number; carbs: number; fat: number } }) => ({
-      calories: acc.calories + (log.ingredient.calories * log.amountGrams / 100),
-      protein: acc.protein + (log.ingredient.protein * log.amountGrams / 100),
-      carbs: acc.carbs + (log.ingredient.carbs * log.amountGrams / 100),
-      fat: acc.fat + (log.ingredient.fat * log.amountGrams / 100),
-      workouts: acc.workouts
-    }), { calories: 0, protein: 0, carbs: 0, fat: 0, workouts: 0 })
+      const foodTotals = (foodToday || []).reduce((acc: TodayStats, log: { amountGrams: number; ingredient: { calories: number; protein: number; carbs: number; fat: number } }) => ({
+        calories: Math.round(acc.calories + (log.ingredient.calories * log.amountGrams / 100)),
+        protein: Math.round(acc.protein + (log.ingredient.protein * log.amountGrams / 100)),
+        carbs: Math.round(acc.carbs + (log.ingredient.carbs * log.amountGrams / 100)),
+        fat: Math.round(acc.fat + (log.ingredient.fat * log.amountGrams / 100)),
+        workouts: acc.workouts
+      }), { calories: 0, protein: 0, carbs: 0, fat: 0, workouts: 0 })
       
       setTodayStats({
         ...foodTotals,
